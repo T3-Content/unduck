@@ -1,5 +1,12 @@
+import { inject } from "@vercel/analytics"
 import { bangs } from "./bang";
 import "./global.css";
+
+try {
+  inject();
+} catch (error) {
+  console.warn("Analytics injection failed");
+}
 
 function noSearchDefaultPageRender() {
   const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -21,11 +28,7 @@ function noSearchDefaultPageRender() {
         </div>
       </div>
       <footer class="footer">
-        <a href="https://t3.chat" target="_blank">t3.chat</a>
-        •
-        <a href="https://x.com/theo" target="_blank">theo</a>
-        •
-        <a href="https://github.com/t3dotgg/unduck" target="_blank">github</a>
+        <a href="https://github.com/strayfatty/unduck" target="_blank">github</a>
       </footer>
     </div>
   `;
