@@ -30,59 +30,68 @@ function noSearchDefaultPageRender() {
     </div>
   `;
 
-  const copyButton = app.querySelector<HTMLButtonElement>(".copy-button")!;
-  const copyIcon = copyButton.querySelector("img")!;
-  const urlInput = app.querySelector<HTMLInputElement>(".url-input")!;
+	const copyButton = app.querySelector<HTMLButtonElement>(".copy-button")!;
+	const copyIcon = copyButton.querySelector("img")!;
+	const urlInput = app.querySelector<HTMLInputElement>(".url-input")!;
 
-  copyButton.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(urlInput.value);
-    copyIcon.src = "/clipboard-check.svg";
+	copyButton.addEventListener("click", async () => {
+		await navigator.clipboard.writeText(urlInput.value);
+		copyIcon.src = "/clipboard-check.svg";
 
-    setTimeout(() => {
-      copyIcon.src = "/clipboard.svg";
-    }, 2000);
-  });
+		setTimeout(() => {
+			copyIcon.src = "/clipboard.svg";
+		}, 2000);
+	});
 }
 
 const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
+const LS_DEFAULT_T3_BANG = localStorage.getItem("default-t3-bang") ?? "g25f";
 const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
+const defaultT3Bang = t3Bangs.find((b) => b.t === LS_DEFAULT_T3_BANG);
 
 function getBangredirectUrl() {
-  const url = new URL(window.location.href);
-  const query = url.searchParams.get("q")?.trim() ?? "";
-  if (!query) {
-    noSearchDefaultPageRender();
-    return null;
-  }
+	const url = new URL(window.location.href);
+	const query = url.searchParams.get("q")?.trim() ?? "";
+	if (!query) {
+		noSearchDefaultPageRender();
+		return null;
+	}
 
-  const match = query.match(/!(\S+)/i);
+	const match = query.match(/!(\S+?)(?=@|\s|$)/i);
+	const t3Match = query.match(/@(\S+?)(?=\s|$)/i);
 
-  const bangCandidate = match?.[1]?.toLowerCase();
-  const selectedBang = bangs.find((b) => b.t === bangCandidate) ?? defaultBang;
+	const bangCandidate = match?.[1]?.toLowerCase();
+	const selectedBang = bangs.find((b) => b.t === bangCandidate) ?? defaultBang;
+	let selectedUrl = selectedBang?.u;
+	if (selectedBang?.t === "t3") {
+		const t3BangCandidate = t3Match?.[1]?.toLowerCase();
+		const selectedT3Bang =
+			t3Bangs.find((b) => b.t === t3BangCandidate) ?? defaultT3Bang;
+		selectedUrl = selectedT3Bang?.u;
+	}
+	// Remove the first bang from the query
+	const cleanQuery = query.replace(/!\S+\s*/i, "").trim();
 
-  // Remove the first bang from the query
-  const cleanQuery = query.replace(/!\S+\s*/i, "").trim();
+	// If the query is just `!gh`, use `github.com` instead of `github.com/search?q=`
+	if (cleanQuery === "")
+		return selectedBang ? `https://${selectedBang.d}` : null;
 
-  // If the query is just `!gh`, use `github.com` instead of `github.com/search?q=`
-  if (cleanQuery === "")
-    return selectedBang ? `https://${selectedBang.d}` : null;
+	// Format of the url is:
+	// https://www.google.com/search?q={{{s}}}
+	const searchUrl = selectedUrl?.replace(
+		"{{{s}}}",
+		// Replace %2F with / to fix formats like "!ghr+t3dotgg/unduck"
+		encodeURIComponent(cleanQuery).replace(/%2F/g, "/")
+	);
+	if (!searchUrl) return null;
 
-  // Format of the url is:
-  // https://www.google.com/search?q={{{s}}}
-  const searchUrl = selectedBang?.u.replace(
-    "{{{s}}}",
-    // Replace %2F with / to fix formats like "!ghr+t3dotgg/unduck"
-    encodeURIComponent(cleanQuery).replace(/%2F/g, "/"),
-  );
-  if (!searchUrl) return null;
-
-  return searchUrl;
+	return searchUrl;
 }
 
 function doRedirect() {
-  const searchUrl = getBangredirectUrl();
-  if (!searchUrl) return;
-  window.location.replace(searchUrl);
+	const searchUrl = getBangredirectUrl();
+	if (!searchUrl) return;
+	window.location.replace(searchUrl);
 }
 
 doRedirect();
