@@ -1,4 +1,5 @@
 import { bangs } from "./bang";
+import { t3Bangs } from "./t3bangs";
 import "./global.css";
 
 function noSearchDefaultPageRender() {
