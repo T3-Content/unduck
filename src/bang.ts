@@ -11,6 +11,15 @@ export const bangs = [
     u: "https://www.t3.chat/new?q={{{s}}}",
   },
   {
+    c: "3D Printing",
+    d: "makerworld.com",
+    r: 0,
+    s: "MakerWorld",
+    sc: "3D Printing",
+    t: "makerworld",
+    u: "https://makerworld.com/en/search/models?keyword={{{s}}}",
+  },
+  {
     c: "Tech",
     d: "www.01net.com",
     r: 4,
