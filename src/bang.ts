@@ -16,7 +16,7 @@ export const bangs = [
     r: 0,
     s: "MakerWorld",
     sc: "3D Printing",
-    t: "makerworld",
+    t: "maw",
     u: "https://makerworld.com/en/search/models?keyword={{{s}}}",
   },
   {
