@@ -1,0 +1,14 @@
+.git
+.github
+.gitattributes
+.gitignore
+node_modules
+dist
+dist-ssr
+.vscode
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db

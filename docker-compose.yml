@@ -1,0 +1,10 @@
+services:
+  unduck:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: unduck
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src/bang.ts:/app/src/bang.ts
