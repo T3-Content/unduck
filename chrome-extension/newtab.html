@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Unduck Custom</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      color: #fff;
+      font-family: 'Geist', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .loading-container {
+      text-align: center;
+    }
+    .loading-text {
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .loading-bar {
+      width: 300px;
+      height: 4px;
+      background-color: #333;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%;
+      background-color: #fff;
+      border-radius: 2px;
+      animation: loading 3s linear forwards;
+    }
+    @keyframes loading {
+      from {
+        width: 0%;
+      }
+      to {
+        width: 100%;
+      }
+    }
+  </style>
+  <meta http-equiv="refresh" content="3;url=https://unduckcustom.vercel.app">
+</head>
+<body>
+  <div class="loading-container">
+    <div class="loading-text">Loading Unduck...</div>
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+  </div>
+</body>
+</html>

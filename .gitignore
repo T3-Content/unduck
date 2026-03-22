@@ -11,7 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
-
+main.test.ts
+vitest.config.ts
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

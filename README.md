@@ -1,4 +1,4 @@
-# Unduck
+# Unduck-Custom
 
 DuckDuckGo's bang redirects are too slow. Add the following URL as a custom search engine to your browser. Enables all of DuckDuckGo's bangs to work, but much faster.
 
@@ -11,3 +11,10 @@ https://unduck.link?q=%s
 DuckDuckGo does their redirects server side. Their DNS is...not always great. Result is that it often takes ages.
 
 I solved this by doing all of the work client side. Once you've went to https://unduck.link once, the JS is all cache'd and will never need to be downloaded again. Your device does the redirects, not me.
+
+## New Features
+UnduckCustom has some custom, community-loved features like:
+- Added a browser homepage
+- Added Search engine select with custom search engine support.
+- Added New bangs
+- Chrome Extension
