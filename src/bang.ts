@@ -119891,7 +119891,7 @@ export const bangs = [
     s: "Yufid",
     sc: "Reference (religion)",
     t: "yfd",
-    u: "http://yufid.com/result/?search={{{s}}} ",
+    u: "https://yufid.com/result.html?search={{{s}}}",
   },
   {
     c: "News",
