@@ -10,6 +10,15 @@ export const bangs = [
     t: "t3",
     u: "https://www.t3.chat/new?q={{{s}}}",
   },
+  {   
+    c: "Online Services",
+    d: "www.perplexity.ai",
+    r: 0,
+    s: "Perplexity",
+    sc: "Perplexity",
+    t: "ppx",
+    u: "https://www.perplexity.ai/search/new?focus=internet&q={{{s}}}",
+  },
   {
     c: "Tech",
     d: "npmx",
@@ -122070,5 +122079,5 @@ export const bangs = [
     sc: "Online",
     t: "\u10d0\u10e1\u10e2\u10e0\u10dd",
     u: "http://astronet.ge/?s={{{s}}}",
-  },
+  }
 ];
