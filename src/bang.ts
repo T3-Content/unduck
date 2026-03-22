@@ -90507,7 +90507,7 @@ export const bangs = [
     s: "Real Time Trains",
     sc: "Tracking",
     t: "rtt",
-    u: "http://www.realtimetrains.co.uk/search/handler?type=basic&qs=true&search={{{s}}}",
+    u: "https://www.realtimetrains.co.uk/search/handler?qsearch={{{s}}}&type=detailed",
   },
   {
     c: "Entertainment",
