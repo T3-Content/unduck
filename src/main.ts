@@ -3,6 +3,9 @@ import "./global.css";
 
 function noSearchDefaultPageRender() {
   const app = document.querySelector<HTMLDivElement>("#app")!;
+
+  const currentDefault = localStorage.getItem("default-bang") ?? "g";
+
   app.innerHTML = `
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
       <div class="content-container">
@@ -18,6 +21,21 @@ function noSearchDefaultPageRender() {
           <button class="copy-button">
             <img src="/clipboard.svg" alt="Copy" />
           </button>
+        </div>
+        <div class="top-right-container">
+          <div class="engine-container">
+            <div class="dropdown-container">
+              <div class="engine-text">
+                Default Engine:
+              </div>
+              <select class="engine-selector" class="engine-selector">
+                <!-- Options will be populated by JavaScript -->
+              </select>
+              <button class="submit-button">
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <footer class="footer">
@@ -42,6 +60,59 @@ function noSearchDefaultPageRender() {
       copyIcon.src = "/clipboard.svg";
     }, 2000);
   });
+
+  // Deafault Engine Selector
+  const engineSelector = app.querySelector<HTMLSelectElement>(".engine-selector")!;
+  populateEngineDropdown(engineSelector, currentDefault);
+
+  const submitButton = app.querySelector<HTMLButtonElement>(".submit-button")!;
+  submitButton.addEventListener("click", () => {
+    const selectedEngine = engineSelector.value;
+    localStorage.setItem("default-bang", selectedEngine);
+    showSavedMessage();
+  });
+
+
+  function showSavedMessage() {
+    const existingMessage = app.querySelector(".saved-message");
+    if (existingMessage) existingMessage.remove();
+    
+    const message = document.createElement("div");
+    message.className = "saved-message";
+    message.textContent = "Default engine saved!";
+    app.querySelector(".engine-container")!.appendChild(message);
+    
+    setTimeout(() => message.remove(), 2000);
+  }
+}
+
+function populateEngineDropdown(selectElement: HTMLSelectElement, currentDefault: string) {
+  const commonEngines = [
+    { t: "g", d: "Google"},
+    { t: "ddg", d: "DuckDuckGo"},
+    { t: "b", d: "Bing"},
+    { t: "brave", d: "Brave"},
+    { t: "y", d: "Yahoo"},
+    { t: "yt", d: "YouTube"},
+    { t: "w", d: "Wikipedia"},
+    { t: "gh", d: "GitHub"},
+    { t: "spen", d: "StartPage (English)"},
+    { t: "a", d: "Amazon"},
+    { t: "r", d: "Reddit"}
+  ];
+
+  const commonGroup = document.createElement("optgroup");
+  commonGroup.label = "Engines";
+  
+  commonEngines.forEach(engine => {
+    const option = document.createElement("option");
+    option.value = engine.t;
+    option.textContent = `${engine.d} (!${engine.t})`;
+    option.selected = engine.t === currentDefault;
+    commonGroup.appendChild(option);
+  });
+  
+  selectElement.appendChild(commonGroup);
 }
 
 const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
