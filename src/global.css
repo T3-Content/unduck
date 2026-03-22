@@ -74,7 +74,8 @@ button {
 }
 
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -127,6 +128,115 @@ textarea {
 
 .copy-button.copied {
   background: #28a745;
+}
+
+/* Button container for centering */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* Customize button styles */
+.customize-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.customize-button:hover {
+  background: #e8e8e8;
+  border-color: #bbb;
+}
+
+.customize-button.active {
+  background: #e0e0e0;
+  border-color: #999;
+}
+
+.customize-button img {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.customize-button.active img {
+  transform: rotate(90deg);
+}
+
+/* Settings panel styles */
+.settings-panel {
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.settings-panel.open {
+  max-height: 500px;
+  margin-top: 16px;
+  opacity: 1;
+}
+
+.settings-content {
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: left;
+}
+
+.settings-content h3 {
+  color: #333;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.setting-group {
+  margin-bottom: 16px;
+}
+
+.setting-group label {
+  display: block;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.search-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+}
+
+.search-select:focus {
+  outline: none;
+  border-color: #007acc;
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.setting-description {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
 }
 
 /* Add footer styles */
@@ -192,5 +302,93 @@ textarea {
 
   .copy-button:active {
     background: #333;
+  }
+
+  /* Dark theme for customize button */
+  .customize-button {
+    background: #191919;
+    border-color: #3d3d3d;
+    color: #ddd;
+  }
+
+  .customize-button:hover {
+    background: #222;
+    border-color: #555;
+  }
+
+  .customize-button.active {
+    background: #333;
+    border-color: #666;
+  }
+
+  .customize-button img {
+    filter: invert(1);
+  }
+
+  .customize-button.active img {
+    filter: invert(1);
+  }
+
+  /* Dark theme for settings panel */
+  .settings-content {
+    background: #191919;
+    border-color: #3d3d3d;
+  }
+
+  .settings-content h3 {
+    color: #ddd;
+  }
+
+  .setting-group label {
+    color: #999;
+  }
+
+  .search-select {
+    background: #191919;
+    border-color: #3d3d3d;
+    color: #ddd;
+  }
+
+  .search-select:focus {
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.3);
+  }
+
+  .setting-description {
+    color: #999;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .content-container {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
+  .url-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .copy-button {
+    align-self: stretch;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .customize-button {
+    align-self: stretch;
+    justify-content: center;
+  }
+
+  .settings-content {
+    padding: 16px;
+  }
+
+  .footer {
+    position: relative;
+    margin-top: 32px;
+    bottom: auto;
   }
 }
