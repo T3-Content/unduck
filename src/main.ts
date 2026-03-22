@@ -18,6 +18,17 @@ function noSearchDefaultPageRender() {
           <button class="copy-button">
             <img src="/clipboard.svg" alt="Copy" />
           </button>
+          <br>
+          <p class="customize-link-container">
+            <a href="#" class="customize-link">Want to customize the default bang?</a>
+          </p>
+          <div class="customize-section" style="display: none;">
+            <input 
+              type="text" 
+              class="default-bang-input"
+              placeholder="g (default)" 
+            />
+          </div>
         </div>
       </div>
       <footer class="footer">
@@ -33,6 +44,26 @@ function noSearchDefaultPageRender() {
   const copyButton = app.querySelector<HTMLButtonElement>(".copy-button")!;
   const copyIcon = copyButton.querySelector("img")!;
   const urlInput = app.querySelector<HTMLInputElement>(".url-input")!;
+  const customizeLink = app.querySelector<HTMLLinkElement>(".customize-link")!;
+  const customizeSection = app.querySelector<HTMLDivElement>(".customize-section")!;
+  const defaultBangInput = customizeSection.querySelector<HTMLInputElement>(".default-bang-input")!;
+  const customizeLinkContainer = app.querySelector<HTMLParagraphElement>(".customize-link-container")!;
+  const originalUrl = urlInput.value;
+
+  customizeLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    customizeSection.style.display = "block";
+    customizeLinkContainer.style.display = "none";
+  });
+
+  defaultBangInput.addEventListener("input", () => {
+    const defaultBang = defaultBangInput.value.trim();
+    if (defaultBang === "") {
+      urlInput.value = originalUrl;
+    } else {
+      urlInput.value = `https://unduck.link?q=%s&default=${defaultBang}`;
+    }
+  });
 
   copyButton.addEventListener("click", async () => {
     await navigator.clipboard.writeText(urlInput.value);
@@ -44,12 +75,11 @@ function noSearchDefaultPageRender() {
   });
 }
 
-const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
-const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
-
 function getBangredirectUrl() {
   const url = new URL(window.location.href);
   const query = url.searchParams.get("q")?.trim() ?? "";
+  const urlDefault = url.searchParams.get("default")?.trim() ?? localStorage.getItem("default-bang") ?? "g";
+  const defaultBang = bangs.find((b) => b.t === urlDefault);
   if (!query) {
     noSearchDefaultPageRender();
     return null;
