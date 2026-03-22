@@ -11,6 +11,15 @@ export const bangs = [
     u: "https://www.t3.chat/new?q={{{s}}}",
   },
   {
+  c: "Tech",
+  d: "www.modrinth.com",
+  r: 0,
+  s: "Modrinth",
+  sc: "Downloads (add-ons)",
+  t: "modr",
+  u: "https://modrinth.com/mods?q={{{s}}}",
+  },
+  {
     c: "Tech",
     d: "npmx",
     r: 147,
