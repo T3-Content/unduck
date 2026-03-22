@@ -43152,7 +43152,7 @@ export const bangs = [
     s: "GOG.com",
     sc: "Games (general)",
     t: "gog",
-    u: "https://www.gog.com/games?search={{{s}}}",
+    u: "https://www.gog.com/games?query={{{s}}}",
   },
   {
     c: "Tech",
