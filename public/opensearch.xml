@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription
+	xmlns="http://a9.com/-/spec/opensearch/1.1/"
+	xmlns:moz="http://www.mozilla.org/addons/opensearch/">
+	<ShortName>Unduck</ShortName>
+	<Description>A better default search engine (with bangs!)</Description>
+	<Tags>unduck bangs</Tags>
+	<Url type="text/html" method="GET" template="https://unduck.link/?q={searchTerms}"/>
+	<Image height="16" width="16" type="image/svg+xml">https://unduck.link/search.svg</Image>
+	<InputEncoding>UTF-8</InputEncoding>
+	<OutputEncoding>UTF-8</OutputEncoding>
+	<Query role="example" searchTerms="!g cats"/>
+</OpenSearchDescription>
