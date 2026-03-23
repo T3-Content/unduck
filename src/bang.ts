@@ -122071,4 +122071,13 @@ export const bangs = [
     t: "\u10d0\u10e1\u10e2\u10e0\u10dd",
     u: "http://astronet.ge/?s={{{s}}}",
   },
+  {
+    c: "Perplexity",
+    d: "www.perplexity.ai",
+    r: 0,
+    s: "Perplexity",
+    sc: "AI",
+    t: "pplx",
+    u: "https://www.perplexity.ai/search?s=o&q={{{s}}}",
+  },
 ];
