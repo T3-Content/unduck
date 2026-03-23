@@ -47,6 +47,7 @@ function noSearchDefaultPageRender() {
 const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
 const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
 
+
 function getBangredirectUrl() {
   const url = new URL(window.location.href);
   const query = url.searchParams.get("q")?.trim() ?? "";
@@ -79,7 +80,35 @@ function getBangredirectUrl() {
   return searchUrl;
 }
 
+function feelingLuckyRedirect(query:string) {
+  const cleanQuery = query.replace("!", "").trim();
+  
+  return `https://duckduckgo.com/?q=!ducky+${encodeURIComponent(cleanQuery)}`;
+}
+
 function doRedirect() {
+  const url = new URL(window.location.href);
+  const query = url.searchParams.get("q")?.trim() ?? "";
+  
+  if (!query) {
+    noSearchDefaultPageRender();
+    return null;
+  }
+  
+  const type = /!(?:\s|$)/i.test(query);
+  
+  if (type) {
+    const searchUrl = feelingLuckyRedirect(query);
+    if (!searchUrl) return;
+        
+    const link = document.createElement('a');
+    link.href = searchUrl;
+    link.rel = 'noreferrer noopener';
+    link.click();
+    
+    return;
+  }
+  
   const searchUrl = getBangredirectUrl();
   if (!searchUrl) return;
   window.location.replace(searchUrl);
