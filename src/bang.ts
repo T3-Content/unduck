@@ -122072,9 +122072,9 @@ export const bangs = [
     u: "http://astronet.ge/?s={{{s}}}",
   },
   {
-      t: "gw",
-      u: "https://www.google.com/search?q={{{s}}}&udm=14",
-      s: "Google (Web Only)",
-      c: "web",
+    t: "gweb",
+    u: "https://www.google.com/search?q={{{s}}}&udm=14",
+    s: "Google (Web Only)",
+    c: "web",
   },
 ];
