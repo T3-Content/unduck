@@ -74059,7 +74059,7 @@ export const bangs = [
     s: "NixOS options",
     sc: "Sysadmin",
     t: "nixopt",
-    u: "https://nixos.org/nixos/options.html#{{{s}}}",
+    u: "https://nixos.org/nixos/options.html?query={{{s}}}",
   },
   {
     c: "Tech",
