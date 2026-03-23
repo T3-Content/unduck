@@ -63,18 +63,33 @@ function getBangredirectUrl() {
   // Remove the first bang from the query
   const cleanQuery = query.replace(/!\S+\s*/i, "").trim();
 
+  // Collect additional query parameters (excluding 'q')
+  const additionalParams = Array.from(url.searchParams.entries())
+    .filter(([key]) => key !== "q")
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join("&");
+
   // If the query is just `!gh`, use `github.com` instead of `github.com/search?q=`
   if (cleanQuery === "")
-    return selectedBang ? `https://${selectedBang.d}` : null;
+    return selectedBang
+      ? `https://${selectedBang.d}${additionalParams ? `?${additionalParams}` : ""}`
+      : null;
 
-  // Format of the url is:
+  // Format of the URL is:
   // https://www.google.com/search?q={{{s}}}
-  const searchUrl = selectedBang?.u.replace(
+  let searchUrl = selectedBang?.u.replace(
     "{{{s}}}",
     // Replace %2F with / to fix formats like "!ghr+t3dotgg/unduck"
     encodeURIComponent(cleanQuery).replace(/%2F/g, "/"),
   );
+
   if (!searchUrl) return null;
+
+  // Only append additional parameters if the selected bang is the default bang (Google)
+  if (selectedBang?.t === defaultBang?.t && additionalParams) {
+    const delimiter = searchUrl.includes("?") ? "&" : "?";
+    searchUrl += `${delimiter}${additionalParams}`;
+  }
 
   return searchUrl;
 }
