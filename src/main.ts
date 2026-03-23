@@ -19,6 +19,14 @@ function noSearchDefaultPageRender() {
             <img src="/clipboard.svg" alt="Copy" />
           </button>
         </div>
+        <label class="bang-container">
+          <p>Default Bang (currently <span class="bang-current"></span>)</p>
+          <input
+            class="bang-input"
+            type="text"
+            value="g"
+          />
+        </label>
       </div>
       <footer class="footer">
         <a href="https://t3.chat" target="_blank">t3.chat</a>
@@ -33,6 +41,8 @@ function noSearchDefaultPageRender() {
   const copyButton = app.querySelector<HTMLButtonElement>(".copy-button")!;
   const copyIcon = copyButton.querySelector("img")!;
   const urlInput = app.querySelector<HTMLInputElement>(".url-input")!;
+  const bangInput = app.querySelector<HTMLInputElement>(".bang-input")!;
+  const bangCurrent = app.querySelector<HTMLSpanElement>(".bang-current")!;
 
   copyButton.addEventListener("click", async () => {
     await navigator.clipboard.writeText(urlInput.value);
@@ -41,6 +51,20 @@ function noSearchDefaultPageRender() {
     setTimeout(() => {
       copyIcon.src = "/clipboard.svg";
     }, 2000);
+  });
+
+  bangCurrent.innerText = bangInput.value =
+    localStorage.getItem("default-bang") ?? "g";
+
+  bangInput.addEventListener("input", () => {
+    if (!bangInput.value) return;
+    if (bangs.some((b) => b.t === bangInput.value)) {
+      localStorage.setItem("default-bang", bangInput.value);
+      bangInput.setCustomValidity("");
+      bangCurrent.innerText = bangInput.value;
+    } else {
+      bangInput.setCustomValidity("Unknown bang");
+    }
   });
 }
 

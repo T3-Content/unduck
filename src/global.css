@@ -93,8 +93,15 @@ textarea {
   padding: 0 8px;
 }
 
+.bang-container {
+  margin-top: 16px;
+  display: block;
+  text-align: left;
+}
+
 /* Update url-input width to be 100% since container will control max width */
-.url-input {
+.url-input,
+.bang-input {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
