@@ -150,6 +150,155 @@ textarea {
   color: #333;
 }
 
+/* Settings UI Styles */
+.settings-section {
+  margin-top: 32px;
+  text-align: left;
+  width: 100%;
+}
+
+.settings-section h2 {
+  margin-bottom: 24px;
+  text-align: center;
+  color: #333;
+}
+
+.setting-group {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.setting-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.setting-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  font-size: 14px;
+}
+
+.setting-input:focus {
+  outline: none;
+  border-color: #007acc;
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.1);
+}
+
+/* Custom Bangs Styles */
+.custom-bangs-list {
+  margin-bottom: 20px;
+}
+
+.no-bangs {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.custom-bang-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.bang-info {
+  flex: 1;
+}
+
+.bang-info strong {
+  color: #007acc;
+}
+
+.bang-url {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+.delete-bang-btn {
+  padding: 6px 12px;
+  background: #dc3545;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.delete-bang-btn:hover {
+  background: #c82333;
+}
+
+/* Form Styles */
+.add-bang-form {
+  padding: 16px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.add-bang-form h4 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #007acc;
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.1);
+}
+
+.form-input.full-width {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.primary-button {
+  padding: 10px 20px;
+  background: #007acc;
+  color: white;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.primary-button:hover {
+  background: #005a9e;
+}
+
+.primary-button:active {
+  background: #004785;
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     color: #ddd;
@@ -192,5 +341,65 @@ textarea {
 
   .copy-button:active {
     background: #333;
+  }
+
+  /* Dark mode for settings */
+  .settings-section h2 {
+    color: #ddd;
+  }
+
+  .setting-group {
+    background: #1a1a1a;
+    border-color: #333;
+  }
+
+  .setting-group label {
+    color: #ddd;
+  }
+
+  .setting-input {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #ddd;
+  }
+
+  .setting-input:focus {
+    border-color: #007acc;
+  }
+
+  .custom-bang-item {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+
+  .bang-info strong {
+    color: #4da6ff;
+  }
+
+  .bang-url {
+    color: #999;
+  }
+
+  .add-bang-form {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+
+  .add-bang-form h4 {
+    color: #ddd;
+  }
+
+  .form-input {
+    background: #1a1a1a;
+    border-color: #444;
+    color: #ddd;
+  }
+
+  .form-input:focus {
+    border-color: #007acc;
+  }
+
+  .no-bangs {
+    color: #999;
   }
 }
