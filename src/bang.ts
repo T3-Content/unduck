@@ -122071,4 +122071,13 @@ export const bangs = [
     t: "\u10d0\u10e1\u10e2\u10e0\u10dd",
     u: "http://astronet.ge/?s={{{s}}}",
   },
+  {
+    c: "Tech",
+    d: "grep.app",
+    r: 0,
+    s: "Grep.app",
+    sc: "Search code (any programming language)",
+    t: "grepcode",
+    u: "https://grep.app/search?q={{{s}}}",
+  },
 ];
