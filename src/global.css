@@ -84,6 +84,7 @@ textarea {
   align-items: center;
   gap: 8px;
   margin-top: 16px;
+  width: 100%;
 }
 
 /* Add this new style */
@@ -93,13 +94,56 @@ textarea {
   padding: 0 8px;
 }
 
+.settings-panel {
+  margin-top: 20px;
+  text-align: left;
+  width: 100%;
+}
+
+.settings-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
 /* Update url-input width to be 100% since container will control max width */
-.url-input {
+.url-input,
+.bang-input {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
   width: 100%;
   background: #f5f5f5;
+}
+
+.url-input {
+  min-width: 0;
+  width: auto;
+  flex: 1 1 auto;
+}
+
+.bang-input {
+  max-width: calc(100% - 44px);
+}
+
+.bang-input.invalid {
+  border-color: #cc3a3a;
+  outline: 1px solid rgba(204, 58, 58, 0.18);
+}
+
+.bang-help {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #777;
+}
+
+.bang-error {
+  min-height: 1.25em;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #cc3a3a;
 }
 
 .copy-button {
@@ -110,6 +154,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
 }
 
 .copy-button:hover {
@@ -180,6 +225,21 @@ textarea {
     border-color: #3d3d3d;
     background-color: #191919;
     color: #fff;
+  }
+
+  .bang-input {
+    border-color: #3d3d3d;
+    background-color: #191919;
+    color: #fff;
+  }
+
+  .settings-label,
+  .bang-help {
+    color: #9a9a9a;
+  }
+
+  .bang-error {
+    color: #ff7a7a;
   }
 
   .copy-button img {
