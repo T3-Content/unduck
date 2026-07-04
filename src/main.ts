@@ -1,6 +1,9 @@
 import { bangs } from "./bang";
 import "./global.css";
 
+const LS_DEFAULT_BANG = "default-bang";
+const DEFAULT_BANG_FALLBACK = "g";
+
 function noSearchDefaultPageRender() {
   const app = document.querySelector<HTMLDivElement>("#app")!;
   app.innerHTML = `
@@ -19,6 +22,20 @@ function noSearchDefaultPageRender() {
             <img src="/clipboard.svg" alt="Copy" />
           </button>
         </div>
+        <div class="settings-panel">
+          <label class="settings-label" for="default-bang-input">Default bang</label>
+          <input
+            id="default-bang-input"
+            class="bang-input"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            inputmode="latin"
+            placeholder="g"
+          />
+          <p class="bang-help">Used when a query does not include a bang. Defaults to google</p>
+          <p class="bang-error" aria-live="polite"></p>
+        </div>
       </div>
       <footer class="footer">
         <a href="https://t3.chat" target="_blank">t3.chat</a>
@@ -33,6 +50,9 @@ function noSearchDefaultPageRender() {
   const copyButton = app.querySelector<HTMLButtonElement>(".copy-button")!;
   const copyIcon = copyButton.querySelector("img")!;
   const urlInput = app.querySelector<HTMLInputElement>(".url-input")!;
+  const defaultBangInput = app.querySelector<HTMLInputElement>("#default-bang-input")!;
+  const bangError = app.querySelector<HTMLParagraphElement>(".bang-error")!;
+  let validationTimer: number | undefined;
 
   copyButton.addEventListener("click", async () => {
     await navigator.clipboard.writeText(urlInput.value);
@@ -42,10 +62,39 @@ function noSearchDefaultPageRender() {
       copyIcon.src = "/clipboard.svg";
     }, 2000);
   });
+
+  const validateDefaultBang = () => {
+    const candidate = defaultBangInput.value.trim().toLowerCase();
+
+    if (!candidate) {
+      bangError.textContent = "Default bang cannot be empty.";
+      defaultBangInput.classList.add("invalid");
+      return;
+    }
+
+    const match = bangs.find((bang) => bang.t === candidate);
+    if (!match) {
+      bangError.textContent = `No bang found for !${candidate}.`;
+      defaultBangInput.classList.add("invalid");
+      return;
+    }
+
+    bangError.textContent = "";
+    defaultBangInput.classList.remove("invalid");
+    localStorage.setItem(LS_DEFAULT_BANG, candidate);
+  };
+
+  defaultBangInput.value = localStorage.getItem(LS_DEFAULT_BANG) ?? DEFAULT_BANG_FALLBACK;
+  defaultBangInput.addEventListener("input", () => {
+    window.clearTimeout(validationTimer);
+    validationTimer = window.setTimeout(validateDefaultBang, 350);
+  });
+
+  validateDefaultBang();
 }
 
-const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "g";
-const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
+const storedDefaultBang = localStorage.getItem(LS_DEFAULT_BANG) ?? DEFAULT_BANG_FALLBACK;
+const defaultBang = bangs.find((b) => b.t === storedDefaultBang) ?? bangs.find((b) => b.t === DEFAULT_BANG_FALLBACK);
 
 function getBangredirectUrl() {
   const url = new URL(window.location.href);
