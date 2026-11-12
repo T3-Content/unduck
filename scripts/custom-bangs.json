@@ -1,0 +1,4 @@
+[
+  { "t": "t3", "d": "www.t3.chat", "u": "https://www.t3.chat/new?q={{{s}}}" },
+  { "t": "npmx", "d": "npmx.dev", "u": "https://npmx.dev/search?q={{{s}}}" }
+]
