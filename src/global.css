@@ -129,6 +129,66 @@ textarea {
   background: #28a745;
 }
 
+/* Add Engine Selector Styles */
+.dropdown-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.engine-text{
+  align-content: center;
+}
+
+.engine-selector {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f5f5f5;
+  font-size: 16px;
+  min-width: 250px;
+}
+
+.submit-button {
+  padding: 8px 16px;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submit-button:hover {
+  background-color: #f0f0f0;
+}
+
+.saved-message {
+  margin-top: 40px;
+  padding: 8px 8px;
+  background-color: #d4edda;
+  color: #28a745;
+  border-radius: 4px;
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: fadeOut 2s forwards;
+  animation-delay: 1s;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Top-right positioning for the engine selector */
+.top-right-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 /* Add footer styles */
 .footer {
   position: fixed;
