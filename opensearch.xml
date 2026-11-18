@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>Unduck</ShortName>
+    <Description>DuckDuckGo's bang redirects are too slow.</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Url type="text/html" template="https://unduck.link?q={searchTerms}"/>
+        <Image height="16" width="16">data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAJBQTFRFAAAABgYGMjIyKioqBQUFampq9vb2////7+/vTU1NZWVliYmJGBgYIiIipKSkCwsL8vLym5ubvb294eHhQEBALS0tUVFRGxsbRkZGLCwsVFRUHBwcFhYW/v7+mZmZvr6+5eXlAwMDdnZ2paWlnJycbW1t+Pj4sbGxfHx8MzMzJCQkiIiIi4uLe3t7NDQ0AgICg0dB1QAAAIVJREFUeJxjZEADjNgFGIHgD5IAKyMjUOw7XIDrLwtQxU+m71ABfkbG90CWEONbqIDIZ77XQJbYR4GXEAGJ90LPgSyptyJPIQIyjIyPgCx5Rsb7UEOVnrJwMvA/kb0Dt1aV8SEDj8gDxRsIh2kwXmPQvqN6BdXpurfUL6H6RY/xIi7PIQEAAUEdEQKpKxEAAAAASUVORK5CYII=</Image>
+</OpenSearchDescription>
