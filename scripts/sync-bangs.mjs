@@ -26,7 +26,8 @@ for (const { t, u } of [...custom, ...ddg.sort((a, b) => b.r - a.r)]) {
   if (parsed.username || parsed.password) {
     throw new Error(`Credentials not allowed: ${JSON.stringify({ t, u })}`);
   }
-  const template = url
+  const defaultPort = parsed.protocol === "http:" ? ":80" : ":443";
+  let template = url
     .replace(/^https:\/\//i, "")
     .replace(/^http:\/\//i, ":")
     .replaceAll("<", "%3C")
@@ -39,8 +40,14 @@ for (const { t, u } of [...custom, ...ddg.sort((a, b) => b.r - a.r)]) {
   }
   const rest = isHttp ? template.slice(1) : template;
   const end = rest.search(/[/?#]/);
-  const authority = end === -1 ? rest : rest.slice(0, end);
-  if (authority.toLowerCase() !== parsed.host.replaceAll("{{{s}}}", ">")) {
+  let authority = end === -1 ? rest : rest.slice(0, end);
+  const expectedHost = parsed.host.replaceAll("{{{s}}}", ">");
+  // Strip redundant default ports so `:80` on http bangs never turns into `https://host:80`.
+  if (authority.toLowerCase() === `${expectedHost}${defaultPort}`) {
+    authority = authority.slice(0, -defaultPort.length);
+    template = `${isHttp ? ":" : ""}${authority}${end === -1 ? "" : rest.slice(end)}`;
+  }
+  if (authority.toLowerCase() !== expectedHost) {
     throw new Error(`Ambiguous authority: ${JSON.stringify({ t, u })}`);
   }
   const bareHost = authority
