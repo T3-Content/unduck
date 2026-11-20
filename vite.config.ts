@@ -3,7 +3,7 @@ import { build, defineConfig, type Plugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 /** How many of the most popular bangs go inline into index.html. The others need public/bangs.txt. */
-const HOT_BANG_COUNT = 150;
+const HOT_BANG_COUNT = 300;
 
 /**
  * Bundles src/redirect.ts and puts it inline at the `<!--inline-redirect-->` marker in

@@ -12,7 +12,7 @@ DuckDuckGo does their redirects server side. Their DNS is...not always great. Re
 
 I solved this by doing all of the work client side. Once you've went to https://unduck.link once, the page is cache'd and will never need to be downloaded again. Your device does the redirects, not me.
 
-The redirect code is inline in the HTML, with the 150 most popular bangs. Searches with one of those bangs, or with no bang, redirect before anything else loads. The other bangs need one cached file (`public/bangs.txt`).
+The redirect code is inline in the HTML, with the 300 most popular bangs. Searches with one of those bangs, or with no bang, redirect before anything else loads. The other bangs need one cached file (`public/bangs.txt`).
 
 ## Bangs
 
