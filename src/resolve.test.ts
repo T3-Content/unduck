@@ -102,9 +102,13 @@ test("public/bangs-v2.txt satisfies compact format invariants", () => {
     assert.ok(trigger && !/\s/.test(trigger), `Invalid trigger: ${row}`);
     assert.ok(!/^https?:\/\//i.test(template), `Uncompacted scheme: ${row}`);
     assert.ok(!template.includes("{{{s}}}"), `Uncompacted placeholder: ${row}`);
-    const rest = template[0] === ":" ? template.slice(1) : template;
+    const isHttp = template[0] === ":";
+    const rest = isHttp ? template.slice(1) : template;
     const end = rest.search(/[/?#]/);
-    const host = (end === -1 ? rest : rest.slice(0, end))
+    const authority = end === -1 ? rest : rest.slice(0, end);
+    const parsed = new URL(`${isHttp ? "http" : "https"}://${rest.replace(/>/g, "{{{s}}}")}`);
+    assert.equal(authority.toLowerCase(), parsed.host.replace(/\{\{\{s\}\}\}/g, ">"), `Ambiguous authority: ${row}`);
+    const host = authority
       .split(".")
       .filter((label) => !label.includes(">"))
       .join(".");

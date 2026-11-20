@@ -23,21 +23,31 @@ for (const { t, u } of [...custom, ...ddg.sort((a, b) => b.r - a.r)]) {
   if (!/^https?:\/\//i.test(url)) throw new Error(`Unsupported scheme: ${JSON.stringify({ t, u })}`);
   // Validate URL shape before compacting (still accepts `{{{s}}}` in hostnames).
   const parsed = new URL(url);
-  const authority = url.replace(/^https?:\/\//i, "").split(/[/?#]/, 1)[0];
-  if (parsed.username || parsed.password || authority.includes("@")) {
+  if (parsed.username || parsed.password) {
     throw new Error(`Credentials not allowed: ${JSON.stringify({ t, u })}`);
   }
-  const bareHost = parsed.hostname
-    .split(".")
-    .filter((label) => !label.includes("{{{s}}}"))
-    .join(".");
-  if (!bareHost) throw new Error(`No bare hostname: ${JSON.stringify({ t, u })}`);
   const template = url
     .replace(/^https:\/\//i, "")
     .replace(/^http:\/\//i, ":")
     .replaceAll("<", "%3C")
     .replaceAll(">", "%3E")
     .replaceAll("{{{s}}}", ">");
+  // Verify the resolver's fast string slicing matches the parsed scheme/host and yields a bare host.
+  const isHttp = template[0] === ":";
+  if (isHttp !== (parsed.protocol === "http:")) {
+    throw new Error(`Bad scheme marker: ${JSON.stringify({ t, u })}`);
+  }
+  const rest = isHttp ? template.slice(1) : template;
+  const end = rest.search(/[/?#]/);
+  const authority = end === -1 ? rest : rest.slice(0, end);
+  if (authority.toLowerCase() !== parsed.host.replaceAll("{{{s}}}", ">")) {
+    throw new Error(`Ambiguous authority: ${JSON.stringify({ t, u })}`);
+  }
+  const bareHost = authority
+    .split(".")
+    .filter((label) => !label.includes(">"))
+    .join(".");
+  if (!bareHost) throw new Error(`No bare hostname: ${JSON.stringify({ t, u })}`);
   const line = `${t}\t${template}`;
   if (!t || /\s/.test(t) || line.split(/[\t\n\r]/).length !== 2) {
     throw new Error(`Bad bang: ${JSON.stringify({ t, u })}`);
