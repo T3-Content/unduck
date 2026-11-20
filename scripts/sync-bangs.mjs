@@ -1,4 +1,4 @@
-// Rebuilds public/bangs.txt from DuckDuckGo's bang list plus scripts/custom-bangs.json.
+// Rebuilds public/bangs-v2.txt from DuckDuckGo's bang list plus scripts/custom-bangs.json.
 // Run with `pnpm sync-bangs`, then commit the result.
 //
 // Output: one `trigger\ttemplate` line per bang, with a newline before the first line and
@@ -22,10 +22,20 @@ for (const { t, u } of [...custom, ...ddg.sort((a, b) => b.r - a.r)]) {
   const url = u.trim().replace(/^\/(?!\/)/, `${DDG}/`);
   if (!/^https?:\/\//i.test(url)) throw new Error(`Unsupported scheme: ${JSON.stringify({ t, u })}`);
   // Validate URL shape before compacting (still accepts `{{{s}}}` in hostnames).
-  new URL(url);
+  const parsed = new URL(url);
+  const authority = url.replace(/^https?:\/\//i, "").split(/[/?#]/, 1)[0];
+  if (parsed.username || parsed.password || authority.includes("@")) {
+    throw new Error(`Credentials not allowed: ${JSON.stringify({ t, u })}`);
+  }
+  const bareHost = parsed.hostname
+    .split(".")
+    .filter((label) => !label.includes("{{{s}}}"))
+    .join(".");
+  if (!bareHost) throw new Error(`No bare hostname: ${JSON.stringify({ t, u })}`);
   const template = url
     .replace(/^https:\/\//i, "")
     .replace(/^http:\/\//i, ":")
+    .replaceAll("<", "%3C")
     .replaceAll(">", "%3E")
     .replaceAll("{{{s}}}", ">");
   const line = `${t}\t${template}`;
@@ -35,5 +45,5 @@ for (const { t, u } of [...custom, ...ddg.sort((a, b) => b.r - a.r)]) {
   lines.set(t, line);
 }
 
-await writeFile(new URL("../public/bangs.txt", import.meta.url), `\n${[...lines.values()].join("\n")}\n`);
+await writeFile(new URL("../public/bangs-v2.txt", import.meta.url), `\n${[...lines.values()].join("\n")}\n`);
 console.log(`Wrote ${lines.size} bangs (${custom.length} custom).`);

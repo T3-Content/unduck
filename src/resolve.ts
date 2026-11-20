@@ -36,7 +36,15 @@ export function resolveRedirect(query: string, defaultTrigger: string, table: st
   // `!gh` alone opens github.com, not an empty search.
   if (!terms) {
     const end = rest.search(/[/?#]/);
-    return `https://${end === -1 ? rest : rest.slice(0, end)}`;
+    let host = end === -1 ? rest : rest.slice(0, end);
+    // Drop dynamic subdomain labels like `>.rtfd.io` so bare `!rtfd` opens `https://rtfd.io`.
+    if (host.includes(">")) {
+      host = host
+        .split(".")
+        .filter((label) => !label.includes(">"))
+        .join(".");
+    }
+    return `https://${host}`;
   }
   // Keep `/` readable for formats like `!ghr t3dotgg/unduck`.
   const encoded = encodeURIComponent(terms).replace(/%2F/g, "/");

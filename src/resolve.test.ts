@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import vm from "node:vm";
+import { buildInlineRedirect, HOT_BANG_COUNT } from "../vite.config.ts";
 import { resolveRedirect } from "./resolve.ts";
 
 const table = [
@@ -13,6 +15,9 @@ const table = [
   "qs\texample.com?next=/home&q=>",
   "hash\texample.org#q=>",
   "bare\t:plain.example",
+  "sub\t:>.rtfd.io",
+  "mid\t:www.>.hypestat.com/",
+  "pref\tsub.foo>.example.com/p",
   "multi\texample.net/a=>&b=>",
   "static\tduckduckgo.com/newbang",
   "",
@@ -38,6 +43,8 @@ test("http:// and https:// search URLs keep their scheme", () => {
   assert.equal(resolve("!gh unduck"), "https://github.com/search?q=unduck");
   assert.equal(resolve("!m new york"), "http://maps.google.com/maps?q=new%20york");
   assert.equal(resolve("!mc redstone"), "http://minecraft.wiki?search=redstone");
+  assert.equal(resolve("!sub requests"), "http://requests.rtfd.io");
+  assert.equal(resolve("!mid example.com"), "http://www.example.com.hypestat.com/");
 });
 
 test("a bang alone opens the site over https", () => {
@@ -47,6 +54,9 @@ test("a bang alone opens the site over https", () => {
   assert.equal(resolve("!qs"), "https://example.com");
   assert.equal(resolve("!hash"), "https://example.org");
   assert.equal(resolve("!bare"), "https://plain.example");
+  assert.equal(resolve("!sub"), "https://rtfd.io");
+  assert.equal(resolve("!mid"), "https://www.hypestat.com");
+  assert.equal(resolve("!pref"), "https://sub.example.com");
 });
 
 test("slashes stay readable and special characters are encoded safely", () => {
@@ -78,17 +88,96 @@ test("a partial table answers only what it knows", () => {
   assert.equal(resolveRedirect("hello", "ghr", hot, false), undefined);
 });
 
-test("public/bangs.txt resolves popular https and http bangs", () => {
-  const fullTable = readFileSync(new URL("../public/bangs.txt", import.meta.url), "utf8");
-  const hotTable = `${fullTable.split("\n", 301).join("\n")}\n`;
-  assert.equal(resolveRedirect("!t3 hello", "g", hotTable, false), "https://www.t3.chat/new?q=hello");
-  assert.equal(resolveRedirect("!t3", "g", hotTable, false), "https://www.t3.chat");
-  assert.equal(resolveRedirect("!npmx vite", "g", hotTable, false), "https://npmx.dev/search?q=vite");
-  assert.equal(resolveRedirect("!pypi httpx", "g", hotTable, false), "https://pypi.org/search/?q=httpx");
-  assert.equal(resolveRedirect("!py asyncio", "g", hotTable, false), "https://docs.python.org/3/search.html?q=asyncio");
-  assert.equal(resolveRedirect("!docker node", "g", hotTable, false), "https://store.docker.com/search?q=node");
-  assert.equal(resolveRedirect("!so typescript", "g", hotTable, false), "http://stackoverflow.com/search?q=typescript");
-  assert.equal(resolveRedirect("!so", "g", hotTable, false), "https://stackoverflow.com");
-  assert.equal(resolveRedirect("!minecraft", "g", hotTable, false), "https://minecraft.wiki");
+test("public/bangs-v2.txt satisfies compact format invariants", () => {
+  const fullTable = readFileSync(new URL("../public/bangs-v2.txt", import.meta.url), "utf8");
+  assert.ok(fullTable.startsWith("\n") && fullTable.endsWith("\n"));
+  assert.equal(fullTable.includes("<"), false);
+
+  const rows = fullTable.slice(1, -1).split("\n");
+  assert.ok(rows.length > HOT_BANG_COUNT);
+  for (const row of rows) {
+    const parts = row.split("\t");
+    assert.equal(parts.length, 2, `Expected 2 columns: ${row}`);
+    const [trigger, template] = parts;
+    assert.ok(trigger && !/\s/.test(trigger), `Invalid trigger: ${row}`);
+    assert.ok(!/^https?:\/\//i.test(template), `Uncompacted scheme: ${row}`);
+    assert.ok(!template.includes("{{{s}}}"), `Uncompacted placeholder: ${row}`);
+    const rest = template[0] === ":" ? template.slice(1) : template;
+    const end = rest.search(/[/?#]/);
+    const host = (end === -1 ? rest : rest.slice(0, end))
+      .split(".")
+      .filter((label) => !label.includes(">"))
+      .join(".");
+    assert.ok(host.length > 0, `Empty bare host: ${row}`);
+  }
+
+  assert.equal(resolveRedirect("!dauser", "g", fullTable, true), "https://deviantart.com");
+  assert.equal(resolveRedirect("!wpblog", "g", fullTable, true), "https://wordpress.com");
+  assert.equal(resolveRedirect("!rtfd", "g", fullTable, true), "https://rtfd.io");
+  assert.equal(resolveRedirect("!tor", "g", fullTable, true), "https://tor2web.org");
+  assert.equal(resolveRedirect("!hypestat", "g", fullTable, true), "https://www.hypestat.com");
   assert.equal(resolveRedirect("!minecraft", "g", fullTable, true), "https://minecraft.wiki");
+});
+
+test("built inline redirect handles hot bangs without fetch and cold bangs via /bangs-v2.txt", async () => {
+  const fullTable = readFileSync(new URL("../public/bangs-v2.txt", import.meta.url), "utf8");
+  const code = await buildInlineRedirect();
+  assert.equal(/<!--|<\/?script/i.test(code), false);
+
+  async function runInline(query: string) {
+    let redirected: string | undefined;
+    const fetched: string[] = [];
+    let pendingFetch: Promise<void> | undefined;
+
+    const sandbox = {
+      URLSearchParams,
+      location: {
+        hostname: "example.test",
+        origin: "https://example.test",
+        search: `?q=${encodeURIComponent(query)}`,
+        replace(url: string) {
+          redirected = url;
+        },
+      },
+      localStorage: { getItem: () => null },
+      document: { referrer: "" },
+      navigator: { sendBeacon: () => true },
+      fetch(url: string) {
+        fetched.push(url);
+        let resolveDone!: () => void;
+        pendingFetch = new Promise((r) => {
+          resolveDone = r;
+        });
+        return Promise.resolve({
+          ok: true,
+          text: () => {
+            queueMicrotask(resolveDone);
+            return Promise.resolve(fullTable);
+          },
+        });
+      },
+    };
+    vm.runInNewContext(code, sandbox);
+    if (pendingFetch) {
+      await pendingFetch;
+      await new Promise((r) => setImmediate(r));
+    }
+    return { redirected, fetched };
+  }
+
+  // Row #270 (`!so`) is the last hot bang and must redirect without fetching.
+  const hotSearch = await runInline("!so typescript");
+  assert.equal(hotSearch.redirected, "http://stackoverflow.com/search?q=typescript");
+  assert.deepEqual(hotSearch.fetched, []);
+
+  const hotBare = await runInline("!gh");
+  assert.equal(hotBare.redirected, "https://github.com");
+  assert.deepEqual(hotBare.fetched, []);
+
+  // Row #271 (first cold bang past HOT_BANG_COUNT) must fetch `/bangs-v2.txt`.
+  const firstColdTrigger = fullTable.slice(1, -1).split("\n")[HOT_BANG_COUNT].split("\t")[0];
+  const expectedCold = resolveRedirect(`!${firstColdTrigger} test`, "g", fullTable, true);
+  const coldSearch = await runInline(`!${firstColdTrigger} test`);
+  assert.equal(coldSearch.redirected, expectedCold);
+  assert.deepEqual(coldSearch.fetched, ["/bangs-v2.txt"]);
 });
