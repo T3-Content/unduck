@@ -30,7 +30,7 @@ if (query) {
   // Popular bangs are inlined. For the others, scan the full table. If it does not load,
   // fall back to the default search engine.
   if (!redirect(hotBangs, false)) {
-    fetch("/bangs.txt")
+    fetch("/bangs-v2.txt")
       .then((response) => (response.ok ? response.text() : hotBangs))
       .catch(() => hotBangs)
       .then((table) => redirect(table, true));

@@ -1,14 +1,17 @@
 // Pure redirect logic. Bundled into the inline script in index.html, so keep it small.
 
 /**
- * Finds a bang in a table made by scripts/sync-bangs.mjs: one `trigger\tdomain\turl` line
+ * Finds a bang in a table made by scripts/sync-bangs.mjs: one `trigger\ttemplate` line
  * per bang, with a newline before the first line and after the last one.
+ *
+ * `template` omits `https://` (prefixing `http://` with `:`) and uses `>` for `{{{s}}}`.
  */
 function findBang(table: string, trigger: string) {
-  const start = table.indexOf(`\n${trigger}\t`);
+  const prefix = `\n${trigger}\t`;
+  const start = table.indexOf(prefix);
   if (start === -1) return undefined;
-  const [, domain, url] = table.slice(start + 1, table.indexOf("\n", start + 1)).split("\t");
-  return { domain, url };
+  const valueStart = start + prefix.length;
+  return table.slice(valueStart, table.indexOf("\n", valueStart));
 }
 
 /**
@@ -28,8 +31,22 @@ export function resolveRedirect(query: string, defaultTrigger: string, table: st
   const target = bang ?? findBang(table, defaultTrigger) ?? (isComplete ? findBang(table, "g") : undefined);
   if (!target) return undefined;
 
+  const isHttp = target[0] === ":";
+  const rest = isHttp ? target.slice(1) : target;
   // `!gh` alone opens github.com, not an empty search.
-  if (!terms) return `https://${target.domain}`;
+  if (!terms) {
+    const end = rest.search(/[/?#]/);
+    let host = end === -1 ? rest : rest.slice(0, end);
+    // Drop dynamic subdomain labels like `>.rtfd.io` so bare `!rtfd` opens `https://rtfd.io`.
+    if (host.includes(">")) {
+      host = host
+        .split(".")
+        .filter((label) => !label.includes(">"))
+        .join(".");
+    }
+    return `https://${host}`;
+  }
   // Keep `/` readable for formats like `!ghr t3dotgg/unduck`.
-  return target.url.replace("{{{s}}}", encodeURIComponent(terms).replace(/%2F/g, "/"));
+  const encoded = encodeURIComponent(terms).replace(/%2F/g, "/");
+  return `${isHttp ? "http" : "https"}://${rest.replace(/>/g, encoded)}`;
 }
